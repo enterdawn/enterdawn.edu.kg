@@ -1,0 +1,396 @@
+
+html {
+  font-family: Arial, Helvetica;
+}
+
+/*!* 总体布局 *!*/
+/*body {*/
+/*  font-family: 'Arial', sans-serif;*/
+/*  line-height: 1.6;*/
+/*  margin: 0;*/
+/*  padding: 0;*/
+/*  color: #ffffff; !* 文本颜色设置为白色 *!*/
+/*  background-color: #1a1a1a; !* 背景颜色设置为深色 *!*/
+/*}*/
+
+/*.container {*/
+/*  width: 80%;*/
+/*  margin: auto;*/
+/*  overflow: hidden;*/
+/*}*/
+
+/*!* 头部样式 *!*/
+/*.head {*/
+/*  background: #333333; !* 头部背景颜色设置为深灰色 *!*/
+/*  color: #ffffff;*/
+/*  padding: 30px 0;*/
+/*  text-align: center;*/
+/*}*/
+
+/*.head h1 {*/
+/*  margin: 0;*/
+/*  font-size: 2.5em;*/
+/*}*/
+
+/*.head p {*/
+/*  margin: 10px 0 0;*/
+/*  font-size: 1.2em;*/
+/*  height: 40px;*/
+
+/*}*/
+
+/*!* 导航链接样式 *!*/
+/*.head a, .footer a {*/
+/*  color: #ffffff; !* 链接颜色设置为白色 *!*/
+/*  text-decoration: none; !* 去掉下划线 *!*/
+/*}*/
+
+/*.head a:hover, .footer a:hover {*/
+/*  color: pink; !* 悬停时链接颜色变化 *!*/
+/*}*/
+
+/*!* 文章列表样式 *!*/
+/*ul {*/
+/*  list-style: none;*/
+/*  padding: 0;*/
+/*  width: 80%;*/
+/*  position: relative;*/
+/*  top: 10px;*/
+/*  bottom: 0;*/
+/*  left: 0;*/
+/*  right: 0;*/
+/*  margin: auto;*/
+
+/*}*/
+
+/*ul li {*/
+/*  background: #333333; !* 列表项背景颜色设置为深灰色 *!*/
+/*  margin-bottom: 15px;*/
+/*  padding: 15px;*/
+/*  border-radius: 5px;*/
+/*}*/
+
+/*ul li a{*/
+/*  color: white; !* 文章链接颜色 *!*/
+/*  text-decoration: none;*/
+/*}*/
+
+/*ul li a:hover {*/
+/*  color: #ffffff; !* 悬停时文章链接颜色变化 *!*/
+/*}*/
+
+/*!* 内容样式 *!*/
+/*.content {*/
+/*  background: #333333; !* 内容背景颜色设置为深灰色 *!*/
+/*  color: #ffffff;*/
+/*  padding: 20px;*/
+/*  margin-top: 20px;*/
+/*  border-radius: 5px;*/
+/*  width: 80%;*/
+
+/*  margin: auto;*/
+/*  position: relative;*/
+/*  top: 10px;*/
+/*  bottom: 0;*/
+/*  left: 0;*/
+/*  right: 0;*/
+/*}*/
+
+/*.content a{*/
+/*  color: pink; !* 文章链接颜色 *!*/
+/*  text-decoration: none;*/
+/*}*/
+
+/*.content a:hover {*/
+/*  color: deeppink; !* 悬停时文章链接颜色变化 *!*/
+/*}*/
+
+/*!* 页脚样式 *!*/
+/*.footer {*/
+/*  background: #333333; !* 页脚背景颜色设置为深灰色 *!*/
+/*  color: #ffffff;*/
+/*  text-align: center;*/
+/*  padding: 10px 0;*/
+/*  margin-top: 20px;*/
+/*  width: 100%;*/
+/*  bottom: 0;*/
+/*}*/
+
+/*.footer div {*/
+/*  margin: 5px 0;*/
+/*}*/
+
+/*.copy:before{*/
+/*  content:"复制";*/
+/*}*/
+
+/*.copy {*/
+/*  background-color: #007bff; !* 背景颜色 *!*/
+/*  color: #fff; !* 文字颜色 *!*/
+/*  padding: 2px 8px; !* 内边距 *!*/
+/*  border-radius: 4px; !* 圆角 *!*/
+/*  border:0px;*/
+/*  font-size: 0.5em; !* 字体大小 *!*/
+/*  font-weight: bold; !* 字体加粗 *!*/
+/*  font-family: 'Arial', sans-serif;*/
+/*}*/
+
+/*.copy:hover {*/
+/*  background-color: #ddd; !* 鼠标悬停时背景颜色变深 *!*/
+/*}*/
+
+/*!* 编程语言标签样式 *!*/
+/*.lang {*/
+/*  background-color: #007bff; !* 背景颜色 *!*/
+/*  color: #fff; !* 文字颜色 *!*/
+/*  padding: 2px 8px; !* 内边距 *!*/
+/*  border-radius: 4px; !* 圆角 *!*/
+/*  font-size: 0.8em; !* 字体大小 *!*/
+/*  font-weight: bold; !* 字体加粗 *!*/
+/*  font-family: 'Arial', sans-serif;*/
+/*}*/
+
+/* 全局基础变量 - 大学风格核心配色 */
+:root {
+  --primary-color: #1a365d; /* 藏青色（大学主色调） */
+  --secondary-color: #f8f7f2; /* 米白色（头部背景） */
+  --accent-color: #c8a950; /* 金色（点缀/装饰） */
+  --text-color: #2d3748; /* 深灰（正文） */
+  --light-gray: #e5e5e0; /* 浅灰（边框/分隔线） */
+  --dark-gray: #d0d0c8; /* 深灰（粗分隔线） */
+  --container-width: 1200px; /* 统一宽度 */
+  --font-serif: 'Times New Roman', Times, serif; /* 衬线字体（标题） */
+  --font-sans: 'Segoe UI', Roboto, sans-serif; /* 无衬线字体（正文） */
+}
+
+/* 全局重置 & 基础样式 */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  color: var(--text-color);
+  font-family: var(--font-sans);
+  line-height: 1.6;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+ul {
+  list-style: none;
+}
+
+/* ---------------- 头部样式：强化分区 + 大学风格 ---------------- */
+.head {
+  max-width: var(--container-width);
+  margin: 0 auto;
+  padding: 3rem 2rem; /* 大间距拉开高度 */
+  text-align: center;
+  background-color: var(--secondary-color); /* 独立背景色 */
+  border-bottom: 3px solid var(--dark-gray); /* 粗分隔线区分中部 */
+  margin-bottom: 4rem; /* 超大间距，彻底分隔头部/中部 */
+}
+
+/* Logo + 标题排版 */
+.head a {
+  display: inline-flex;
+  align-items: center;
+  gap: 1rem;
+  color: var(--primary-color);
+  margin-bottom: 1rem;
+}
+
+.head img {
+  width: 50px;
+  height: 50px; /* 固定高度避免变形 */
+  object-fit: contain;
+  border-radius: 4px;
+  border: 1px solid var(--light-gray);
+  padding: 0.3rem;
+  background-color: white;
+}
+
+.head h1 {
+  font-family: var(--font-serif);
+  font-size: 2.2rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  position: relative;
+}
+
+/* 标题下金色装饰线（大学风格） */
+.head h1::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100px;
+  height: 2px;
+  background-color: var(--accent-color);
+}
+
+.head p {
+  font-size: 1.1rem;
+  max-width: 800px;
+  margin: 0 auto;
+  color: var(--text-color);
+}
+
+/* ---------------- 中间首页区域：强制渲染 + 卡片布局 ---------------- */
+.middle-homepage {
+  max-width: var(--container-width);
+  margin: 0 auto;
+  padding: 0 2rem;
+  margin-bottom: 4rem; /* 与页脚分隔 */
+  min-height: calc(100vh - 400px); /* 防止高度塌陷 */
+}
+
+/* 强制渲染列表 - 解决不显示问题 */
+.middle-homepage ul {
+  display: grid !important; /* 强制网格布局 */
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+/* 卡片项样式（大学风格） */
+.middle-homepage li {
+  display: block !important; /* 强制显示 */
+  background-color: white;
+  border: 1px solid var(--light-gray);
+  border-radius: 8px;
+  padding: 2rem 1.5rem;
+  box-shadow: 0 3px 8px rgba(26, 54, 93, 0.08);
+  transition: all 0.3s ease;
+}
+
+.middle-homepage li:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 15px rgba(26, 54, 93, 0.12);
+  border-color: var(--accent-color);
+}
+
+.middle-homepage li h2 {
+  font-family: var(--font-serif);
+  color: var(--primary-color);
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px dotted var(--light-gray);
+}
+
+.middle-homepage li p {
+  font-size: 1rem;
+  color: var(--text-color);
+}
+
+/* ---------------- 中间其他页面区域：确保Content渲染 ---------------- */
+.middle-otherpage {
+  max-width: var(--container-width);
+  margin: 0 auto;
+  padding: 0 2rem 4rem;
+  min-height: calc(100vh - 400px);
+}
+
+/* 适配Content组件内样式 */
+.middle-otherpage :deep(h1),
+.middle-otherpage :deep(h2),
+.middle-otherpage :deep(h3) {
+  font-family: var(--font-serif);
+  color: var(--primary-color);
+  margin: 1.5rem 0 1rem;
+}
+
+.middle-otherpage :deep(a) {
+  color: var(--primary-color);
+  border-bottom: 1px dotted var(--primary-color);
+  transition: border-color 0.3s ease;
+}
+
+.middle-otherpage :deep(a:hover) {
+  border-color: var(--accent-color);
+}
+
+.middle-otherpage :deep(p) {
+  margin-bottom: 1rem;
+  line-height: 1.8;
+}
+
+/* ---------------- 页脚样式：大学风格收尾 ---------------- */
+.footer {
+  max-width: var(--container-width);
+  margin: 0 auto 2rem;
+  padding: 2.5rem 2rem;
+  border-top: 3px solid var(--dark-gray); /* 与头部分隔线呼应 */
+  text-align: center;
+  background-color: var(--secondary-color);
+  border-radius: 8px;
+  font-size: 0.98rem;
+  color: var(--text-color);
+  line-height: 1.9;
+}
+
+.footer a {
+  color: var(--primary-color);
+  border-bottom: 1px dotted var(--primary-color);
+  transition: all 0.3s ease;
+}
+
+.footer a:hover {
+  color: var(--accent-color);
+  border-bottom-color: var(--accent-color);
+}
+
+.footer > div:nth-child(3) { /* 友情链接 */
+  margin: 1rem 0;
+  color: var(--primary-color);
+  cursor: pointer;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.footer > div:nth-child(3):hover {
+  color: var(--accent-color);
+}
+
+/* ---------------- 响应式适配 ---------------- */
+@media (max-width: 768px) {
+  .head {
+    padding: 2rem 1.2rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .head h1 {
+    font-size: 1.8rem;
+  }
+
+  .head a {
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+
+  .middle-homepage,
+  .middle-otherpage,
+  .footer {
+    padding: 0 1.2rem;
+  }
+
+  .middle-homepage ul {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .middle-homepage li {
+    padding: 1.5rem 1rem;
+  }
+
+  .footer {
+    padding: 2rem 1.2rem;
+    font-size: 0.9rem;
+  }
+}
