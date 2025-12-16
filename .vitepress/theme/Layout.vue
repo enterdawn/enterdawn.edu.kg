@@ -1,91 +1,118 @@
 <script setup lang="ts">
 import { useData, useRoute } from 'vitepress'
-import { onMounted, ref, watch } from 'vue'
+import { onMounted, ref, watch, computed, onUnmounted } from 'vue'
+import { ElLink, ElMessageBox } from 'element-plus'
 
-const { site, frontmatter } = useData()
+// 1. 基础变量（提前定义，避免作用域问题）
+const { frontmatter, page, site } = useData()
 const route = useRoute()
-const commentRef = ref<HTMLElement>(null)
+const commentRef = ref<HTMLDivElement>(null)
+let gitalkScript: HTMLScriptElement | null = null
+let isGitalkLoaded = false
 
-const loadGiscus = () => {
-    // 清空容器，避免重复加载/残留错误配置
-    if (commentRef.value) {
-        commentRef.value.innerHTML = '<h3 class="comment-title">评论区</h3>'
-        // 清除可能的全局错误配置
-        if (window.giscusConfig) delete window.giscusConfig
-    }
+// 2. 评论区显示逻辑
+const showComment = computed(() => {
+    return page.path !== '/' && frontmatter.comment !== false
+})
 
-    const isCommentOpen = !frontmatter.home && frontmatter.comment !== false
-    if (isCommentOpen && commentRef.value) {
-        const script = document.createElement('script')
-        script.src = 'https://giscus.app/client.js'
-
-        // 标准 data-* 属性配置（修复格式错误）
-        script.setAttribute('data-repo', 'enterdawn/enterdawn.edu.kg')
-        script.setAttribute('data-repo-id', 'R_kgDOQpHIKg')
-        script.setAttribute('data-category', 'Announcements')
-        script.setAttribute('data-category-id', 'DIC_kwDOQpHIKs4Cz0lr')
-        script.setAttribute('data-mapping', 'pathname')
-        script.setAttribute('data-reactions-enabled', '1')
-        script.setAttribute('data-emit-metadata', '0')
-        script.setAttribute('data-input-position', 'top')
-        script.setAttribute('data-theme', 'light')
-        script.setAttribute('data-lang', 'zh-CN')
-        script.setAttribute('data-loading', 'lazy')
-        // 关键：正确配置子域名代理（格式为完整URL）
-        script.setAttribute('data-api-url', 'https://github-proxy.enterdawn.edu.kg/graphql')
-        script.setAttribute('data-origin', 'http://localhost:5173') // 本地开发环境；生产环境改为 https://enterdawn.edu.kg
-        script.setAttribute('crossorigin', 'anonymous')
-        script.async = true
-
-        // 移除旧脚本，避免冲突
-        const oldScript = document.querySelector('script[src="https://giscus.app/client.js"]')
-        if (oldScript) oldScript.remove()
-
-        commentRef.value.appendChild(script)
-    } else if (commentRef.value) {
-        commentRef.value.innerHTML = `
-      <h3 class="comment-title">评论区</h3>
-      <div class="comment-closed">
-        <p class="closed-title">评论区已关闭</p>
-        <p class="closed-desc">本页面暂未开放评论功能，感谢你的理解~</p>
-      </div>
-    `
-    }
+// 3. Gitalk 核心配置（替换为你的信息）
+const gitalkConfig = {
+    clientID: 'Ov23liDgWI9RBb21UXjZ',
+    clientSecret: 'b6c9d9d8c4b79ad7e98369c649cf80aa493f837e',
+    repo: 'enterdawn.edu.kg', // 存储评论的 GitHub 仓库名
+    owner: 'enterdawn',
+    admin: ['enterdawn'],
+    id: computed(() => page.path), // 按页面路径生成唯一 ID
+    proxy: 'https://github-proxy.enterdawn.edu.kg/login/oauth/access_token', // 代理地址
+    language: 'zh-CN',
+    distractionFreeMode: false // 关闭无干扰模式
 }
 
-// 首次挂载 + 路由监听（延长延迟，适配本地开发）
-onMounted(() => loadGiscus())
-watch(
-    () => route.path,
-    () => setTimeout(() => loadGiscus(), 300), // 延长延迟到300ms，确保容器加载完成
-    { immediate: true }
-)
-</script>
 
-<script lang="ts">
-import { h } from 'vue';
-import { ElLink,ElMessage, ElMessageBox } from 'element-plus'
-import type { Action } from 'element-plus'
-const open = () => {
+// 4. 清空 Gitalk（替代 destroy 方法）
+const clearGitalk = () => {
+    if (!commentRef.value) return
+    commentRef.value.innerHTML = '' // 清空DOM销毁实例
+    const styleLink = document.querySelector('link[href*="gitalk.min.css"]')
+    if (styleLink) styleLink.remove()
+    isGitalkLoaded = false
+}
+
+// 5. 渲染 Gitalk
+const renderGitalk = () => {
+    if (!commentRef.value || !isGitalkLoaded || !(window as any).Gitalk) return
+
+    const gitalk = new (window as any).Gitalk({
+        clientID: gitalkConfig.clientID,
+        clientSecret: gitalkConfig.clientSecret,
+        repo: gitalkConfig.repo,
+        owner: gitalkConfig.owner,
+        admin: gitalkConfig.admin,
+        id: encodeURIComponent(page.path), // 编码特殊字符避免报错
+        proxy: gitalkConfig.proxy,
+        language: 'zh-CN',
+        distractionFreeMode: false
+    })
+    gitalk.render(commentRef.value)
+}
+
+// 6. 初始化 Gitalk
+const initGitalk = () => {
+    if (!showComment.value) {
+        clearGitalk()
+        return
+    }
+
+    clearGitalk() // 清空旧内容
+
+    // 已加载脚本直接渲染
+    if (isGitalkLoaded && (window as any).Gitalk) {
+        renderGitalk()
+        return
+    }
+
+    // 加载 Gitalk 脚本和样式
+    gitalkScript = document.createElement('script')
+    gitalkScript.src = 'https://cdn.staticfile.org/gitalk/1.8.0/gitalk.min.js'
+    gitalkScript.async = true
+    gitalkScript.onload = () => {
+        // 加载样式
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = 'https://cdn.staticfile.org/gitalk/1.8.0/gitalk.min.css'
+        document.head.appendChild(link)
+
+        isGitalkLoaded = true
+        renderGitalk()
+    }
+    // 脚本加载失败提示
+    gitalkScript.onerror = () => {
+        console.error('Gitalk 脚本加载失败，请检查网络或CDN地址')
+    }
+    document.body.appendChild(gitalkScript)
+}
+
+// 7. 友情链接弹窗（保留你的原有功能）
+const openFriendLink = () => {
     const linkNode = h(
         ElLink,
-        {
-            href: 'https://enterdawn.top' ,
-            target: '_blank',
-            type: 'primary', // 可以使用 ElLink 的所有 props
-            underline: true, // 是否显示下划线
-        },
+        { href: 'https://enterdawn.top', target: '_blank', type: 'primary', underline: true },
         'enterdawn的主页'
-    );
+    )
     ElMessageBox.alert(linkNode, '友情链接', {
-    // if you want to disable its autofocus
-    // autofocus: false,
         dangerouslyUseHTMLString: true,
-        confirmButtonText: '确定',
+        confirmButtonText: '确定'
     })
-
 }
+
+// 8. 路由监听 + 生命周期
+watch(() => route.path, () => initGitalk(), { immediate: true })
+onUnmounted(() => {
+    clearGitalk()
+    if (gitalkScript) gitalkScript.remove()
+})
 </script>
+
 
 
 <template>
@@ -118,9 +145,7 @@ const open = () => {
   </div>
   <div class="middle-otherpage" v-else>
     <Content />
-      <div class="comment-section" ref="commentRef">
-          <h3 class="comment-title">评论区</h3>
-      </div>
+      <div ref="commentRef" class="comment-section" v-if="showComment"></div>
   </div>
    <div class="footer">
       <div v-html="site.themeConfig.footer.message"></div>

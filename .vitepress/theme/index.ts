@@ -7,7 +7,7 @@ import 'element-plus/theme-chalk/index.css'
 export default {
   Layout,
   enhanceApp({ app, router, siteData }) {
-    // ...
+    //app.component('GiscusComment', () => import('./components/GiscusComment.vue'))
   }
 } satisfies Theme
 
