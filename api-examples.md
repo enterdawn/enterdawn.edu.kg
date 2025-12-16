@@ -1,5 +1,8 @@
 ---
 outline: deep
+title: 示例页面2
+date: 2025-12-15
+comment: false
 ---
 
 # Runtime API Examples

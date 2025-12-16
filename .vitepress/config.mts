@@ -10,7 +10,7 @@ export default defineConfig({
         logo: 'logo.png',
         footer: {
             message: 'Enterdawn Universuty并不是一所真正的大学，详情请阅读<a style="color: pink;" href="/article/others/about.html">关于本站</a>',
-            copyright: 'Enterdawn university is not a real university. For more details, please read <a style="color: pink;"  href="/article/others/about.html">about us</a>'
+            copyright: 'Enterdawn University is not a real university. For more details, please read <a style="color: pink;"  href="/article/others/about.html">about us</a>'
         }
     },
     vite: {

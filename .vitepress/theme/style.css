@@ -394,3 +394,63 @@ ul {
     font-size: 0.9rem;
   }
 }
+
+
+/*评论区样式*/
+
+
+/* 保留原有样式 */
+:root {
+  --primary-color: #1a365d;
+  --secondary-color: #f8f7f2;
+  --accent-color: #c8a950;
+  --text-color: #2d3748;
+  --light-gray: #e5e5e0;
+  --gray: #999;
+}
+
+.comment-section {
+  margin: 4rem 0 2rem;
+  padding-top: 2rem;
+  border-top: 2px solid var(--light-gray);
+}
+
+.comment-title {
+  font-family: 'Times New Roman', Times, serif;
+  color: var(--primary-color);
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px dotted var(--light-gray);
+}
+
+.comment-closed {
+  background-color: var(--secondary-color);
+  border-radius: 8px;
+  padding: 2rem;
+  text-align: center;
+  border-left: 3px solid var(--accent-color);
+}
+
+.closed-title {
+  color: var(--primary-color);
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 0.8rem;
+}
+
+.closed-desc {
+  color: var(--gray);
+  font-size: 1rem;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* Giscus 样式适配 */
+:deep(.giscus) {
+  --color-primary: var(--primary-color);
+  --color-accent: var(--accent-color);
+  --color-background: var(--secondary-color);
+  --color-text: var(--text-color);
+  font-family: 'Segoe UI', Roboto, sans-serif;
+}

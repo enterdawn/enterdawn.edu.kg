@@ -1,3 +1,9 @@
+---
+outline: deep
+title: 示例页面1
+date: 2025-12-15
+comment: true
+---
 # Markdown Extension Examples
 
 This page demonstrates some of the built-in markdown extensions provided by VitePress.
