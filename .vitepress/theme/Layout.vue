@@ -1,7 +1,27 @@
 <script setup lang="ts">
 import { useData, useRoute } from 'vitepress'
 import { onMounted, ref, watch, computed, onUnmounted, h } from 'vue'
-import { ElLink, ElMessageBox } from 'element-plus'
+import { ElLink, ElMessageBox, ElSpace  } from 'element-plus'
+import hljs from 'highlight.js'
+import 'highlight.js/styles/rainbow.css' // 可选样式（推荐：atom-one-dark / monokai / github）
+// 代码高亮初始化函数
+const initHighlight = () => {
+    if (route.path === '/') return
+    hljs.highlightAll() // 一键高亮所有 <pre><code> 标签，无需手动遍历
+}
+onMounted(() => {
+    initHighlight() // 初始化高亮
+
+    watch(
+        () => route.path,
+        () => {
+            setTimeout(() => {
+                initHighlight() // 路由切换后重新高亮
+            }, 150)
+        },
+        { deep: true }
+    )
+})
 
 // 1. 基础变量（提前定义，避免作用域问题）
 const { frontmatter, page, site } = useData()
@@ -112,14 +132,27 @@ const initGitalk = () => {
 
 // 7. 友情链接弹窗
 const openFriendLink = () => {
+    // 用 ElSpace 包裹多个链接（自动添加间距，Element Plus 推荐）
     const linkNode = h(
-        ElLink,
-        { href: 'https://enterdawn.top', target: '_blank', type: 'primary', underline: true },
-        'enterdawn的主页'
+        ElSpace, // 布局容器：自动给子元素加间距
+        { direction: 'vertical', size: 'small' }, // 垂直排列，小间距
+        [
+            // 第一个链接
+            h(
+                ElLink,
+                { href: 'https://enterdawn.top', target: '_blank', type: 'primary', underline: true },
+                'enterdawn的主页'
+            ),
+            // 第二个链接（按需修改 href 和文字）
+            h('div', { style: 'color: #666; line-height: 1.5;' }, '添加友情链接请联系enterdawn'),
+        ]
     )
+
     ElMessageBox.alert(linkNode, '友情链接', {
         dangerouslyUseHTMLString: true,
-        confirmButtonText: '确定'
+        confirmButtonText: '确定',
+        // 可选：调整弹窗宽度，适配多个链接
+        customClass: 'friend-link-box'
     })
 }
 
@@ -174,6 +207,7 @@ onUnmounted(() => {
   <div class="middle-otherpage" v-else>
     <Content />
       <div ref="commentRef" class="comment-section" v-if="isShowComment"></div>
+      <div class="no-comment" v-else><br>评论区已关闭</div>
   </div>
    <div class="footer">
       <div v-html="site.themeConfig.footer.message"></div>

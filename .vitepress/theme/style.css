@@ -120,35 +120,35 @@ html {
 /*  margin: 5px 0;*/
 /*}*/
 
-/*.copy:before{*/
-/*  content:"复制";*/
-/*}*/
+.copy:before{
+  content:"copy";
+}
 
-/*.copy {*/
-/*  background-color: #007bff; !* 背景颜色 *!*/
-/*  color: #fff; !* 文字颜色 *!*/
-/*  padding: 2px 8px; !* 内边距 *!*/
-/*  border-radius: 4px; !* 圆角 *!*/
-/*  border:0px;*/
-/*  font-size: 0.5em; !* 字体大小 *!*/
-/*  font-weight: bold; !* 字体加粗 *!*/
-/*  font-family: 'Arial', sans-serif;*/
-/*}*/
+.copy {
+  background-color: #007bff; /* 背景颜色 */
+  color: #fff; /* 文字颜色 */
+  padding: 2px 8px; /* 内边距 */
+  border-radius: 4px; /* 圆角 */
+  border:0px;
+  font-size: 0.5em; /* 字体大小 */
+  font-weight: bold; /* 字体加粗 */
+  font-family: 'Arial', sans-serif;
+}
 
-/*.copy:hover {*/
-/*  background-color: #ddd; !* 鼠标悬停时背景颜色变深 *!*/
-/*}*/
+.copy:hover {
+  background-color: #ddd; /* 鼠标悬停时背景颜色变深 */
+}
 
-/*!* 编程语言标签样式 *!*/
-/*.lang {*/
-/*  background-color: #007bff; !* 背景颜色 *!*/
-/*  color: #fff; !* 文字颜色 *!*/
-/*  padding: 2px 8px; !* 内边距 *!*/
-/*  border-radius: 4px; !* 圆角 *!*/
-/*  font-size: 0.8em; !* 字体大小 *!*/
-/*  font-weight: bold; !* 字体加粗 *!*/
-/*  font-family: 'Arial', sans-serif;*/
-/*}*/
+/* 编程语言标签样式 */
+.lang {
+  background-color: #007bff; /* 背景颜色 */
+  color: #fff; /* 文字颜色 */
+  padding: 2px 8px; /* 内边距 */
+  border-radius: 4px; /* 圆角 */
+  font-size: 0.5em; /* 字体大小 */
+  font-weight: bold; /* 字体加粗 */
+  font-family: 'Arial', sans-serif;
+}
 
 /* 全局基础变量 - 大学风格核心配色 */
 :root {
