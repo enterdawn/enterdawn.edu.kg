@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useData, useRoute } from 'vitepress'
-import { onMounted, ref, watch, computed, onUnmounted } from 'vue'
+import { onMounted, ref, watch, computed, onUnmounted, h } from 'vue'
 import { ElLink, ElMessageBox } from 'element-plus'
 
 // 1. 基础变量（提前定义，避免作用域问题）
@@ -10,10 +10,6 @@ const commentRef = ref<HTMLDivElement>(null)
 let gitalkScript: HTMLScriptElement | null = null
 let isGitalkLoaded = false
 
-// 2. 评论区显示逻辑
-const showComment = computed(() => {
-    return page.path !== '/' && frontmatter.comment !== false
-})
 
 // 3. Gitalk 核心配置（替换为你的信息）
 const gitalkConfig = {
@@ -29,18 +25,40 @@ const gitalkConfig = {
 }
 
 
-// 4. 清空 Gitalk（替代 destroy 方法）
-const clearGitalk = () => {
-    if (!commentRef.value) return
-    commentRef.value.innerHTML = '' // 清空DOM销毁实例
+// 3. 评论区显示逻辑（精准检测 frontmatter.comment）
+// 优先级：页面 frontmatter.comment > 默认显示（非首页）
+const isShowComment = computed(() => {
+    console.log(page.value.frontmatter.comment)
+    // 1. 如果页面明确设置 comment: false，直接隐藏
+    if (page.value.frontmatter.comment=== false) return false
+    // 2. 首页默认隐藏
+    if (page.path === '/') return false
+    // 3. 其他页面默认显示（未设置 comment 时）
+    return true
+})
+
+// 4. 强制销毁 Gitalk（确保彻底停止加载）
+const destroyGitalk = () => {
+    // 1. 清空评论区 DOM
+    if (commentRef.value) commentRef.value.innerHTML = ''
+    // 2. 移除脚本和样式
+    if (gitalkScript) {
+        gitalkScript.remove()
+        gitalkScript = null
+    }
     const styleLink = document.querySelector('link[href*="gitalk.min.css"]')
     if (styleLink) styleLink.remove()
+    // 3. 重置状态
     isGitalkLoaded = false
+    // 4. 移除全局实例
+    if ((window as any).Gitalk) delete (window as any).Gitalk
 }
 
-// 5. 渲染 Gitalk
+// 5. 渲染 Gitalk（仅在允许显示时执行）
 const renderGitalk = () => {
-    if (!commentRef.value || !isGitalkLoaded || !(window as any).Gitalk) return
+    if (!isShowComment.value) return // 核心：先判断是否允许显示
+
+    if (!commentRef.value || !(window as any).Gitalk) return
 
     const gitalk = new (window as any).Gitalk({
         clientID: gitalkConfig.clientID,
@@ -48,7 +66,7 @@ const renderGitalk = () => {
         repo: gitalkConfig.repo,
         owner: gitalkConfig.owner,
         admin: gitalkConfig.admin,
-        id: encodeURIComponent(page.path), // 编码特殊字符避免报错
+        id: encodeURIComponent(page.path),
         proxy: gitalkConfig.proxy,
         language: 'zh-CN',
         distractionFreeMode: false
@@ -56,43 +74,43 @@ const renderGitalk = () => {
     gitalk.render(commentRef.value)
 }
 
-// 6. 初始化 Gitalk
+// 6. 初始化 Gitalk（增加前置判断）
 const initGitalk = () => {
-    if (!showComment.value) {
-        clearGitalk()
+    // 第一步：如果不显示评论，直接销毁
+    if (!isShowComment.value) {
+        destroyGitalk()
         return
     }
 
-    clearGitalk() // 清空旧内容
+    // 第二步：需要显示时，先清理旧实例
+    destroyGitalk()
 
-    // 已加载脚本直接渲染
-    if (isGitalkLoaded && (window as any).Gitalk) {
+    // 第三步：加载脚本（未加载时）
+    if (!isGitalkLoaded) {
+        gitalkScript = document.createElement('script')
+        gitalkScript.src = 'https://cdn.staticfile.org/gitalk/1.8.0/gitalk.min.js'
+        gitalkScript.async = true
+        gitalkScript.onload = () => {
+            // 加载样式
+            const link = document.createElement('link')
+            link.rel = 'stylesheet'
+            link.href = 'https://cdn.staticfile.org/gitalk/1.8.0/gitalk.min.css'
+            document.head.appendChild(link)
+
+            isGitalkLoaded = true
+            renderGitalk() // 加载完成后渲染
+        }
+        gitalkScript.onerror = () => {
+            console.error('Gitalk 脚本加载失败')
+        }
+        document.body.appendChild(gitalkScript)
+    } else {
+        // 脚本已加载，直接渲染
         renderGitalk()
-        return
     }
-
-    // 加载 Gitalk 脚本和样式
-    gitalkScript = document.createElement('script')
-    gitalkScript.src = 'https://cdn.staticfile.org/gitalk/1.8.0/gitalk.min.js'
-    gitalkScript.async = true
-    gitalkScript.onload = () => {
-        // 加载样式
-        const link = document.createElement('link')
-        link.rel = 'stylesheet'
-        link.href = 'https://cdn.staticfile.org/gitalk/1.8.0/gitalk.min.css'
-        document.head.appendChild(link)
-
-        isGitalkLoaded = true
-        renderGitalk()
-    }
-    // 脚本加载失败提示
-    gitalkScript.onerror = () => {
-        console.error('Gitalk 脚本加载失败，请检查网络或CDN地址')
-    }
-    document.body.appendChild(gitalkScript)
 }
 
-// 7. 友情链接弹窗（保留你的原有功能）
+// 7. 友情链接弹窗
 const openFriendLink = () => {
     const linkNode = h(
         ElLink,
@@ -105,11 +123,15 @@ const openFriendLink = () => {
     })
 }
 
-// 8. 路由监听 + 生命周期
-watch(() => route.path, () => initGitalk(), { immediate: true })
+// 8. 深度监听（确保 frontmatter 变化时触发）
+watch(
+    () => [route.path, frontmatter.comment], // 监听 path + comment 变化
+    () => initGitalk(),
+    { immediate: true, deep: true } // 立即执行 + 深度监听
+)
+
 onUnmounted(() => {
-    clearGitalk()
-    if (gitalkScript) gitalkScript.remove()
+    destroyGitalk()
 })
 </script>
 
@@ -140,17 +162,23 @@ onUnmounted(() => {
                 <p>示例页面3示例页面3示例页面3示例页面3</p>
             </a>
         </li>
+        <li>
+            <a href="/api-examples.html">
+                <h2>示例页面4</h2>
+                <p>示例页面3示例页面3示例页面3示例页面3</p>
+            </a>
+        </li>
 
     </ul>
   </div>
   <div class="middle-otherpage" v-else>
     <Content />
-      <div ref="commentRef" class="comment-section" v-if="showComment"></div>
+      <div ref="commentRef" class="comment-section" v-if="isShowComment"></div>
   </div>
    <div class="footer">
       <div v-html="site.themeConfig.footer.message"></div>
       <div v-html="site.themeConfig.footer.copyright"></div>
-      <div @click="open">友情链接：点击查看</div>
+      <div @click="openFriendLink">友情链接：点击查看</div>
       <div>Designed by <a href="https://enterdawn.top/article/others/about.html">enterdawn</a></div>
       <div>&copy;2026 enterdawn.edu.kg</div>
   </div>
