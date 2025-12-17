@@ -6,7 +6,7 @@ const { frontmatter, page, site } = useData()
 const route = useRoute()
 
 import hljs from 'highlight.js'
-import 'highlight.js/styles/mono-blue.css' // 可选样式（推荐：atom-one-dark / monokai / github）
+import 'highlight.js/styles/github.css' // 可选样式（推荐：atom-one-dark / monokai / github）
 //代码高亮初始化函数
 const initHighlight = () => {
     if (route.path === '/') return
