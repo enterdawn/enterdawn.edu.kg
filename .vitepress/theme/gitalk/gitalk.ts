@@ -47,7 +47,7 @@ export function useGitalk() {
 
         const gitalk = new (window as any).Gitalk({
             ...gitalkConfig,
-            id: encodeURIComponent(page.value.path),
+            id: encodeURIComponent(page.value.title),
         });
         gitalk.render(commentRef.value);
     };
