@@ -44,10 +44,10 @@ export function useGitalk() {
 
         // 先销毁旧的实例
         destroyGitalk();
-
+        //console.log(page.value)
         const gitalk = new (window as any).Gitalk({
             ...gitalkConfig,
-            id: encodeURIComponent(page.value.title),
+            id: encodeURIComponent(page.value.relativePath),
         });
         gitalk.render(commentRef.value);
     };
