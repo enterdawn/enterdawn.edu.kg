@@ -38,7 +38,7 @@ function shouldProcess(content, lang, options) {
 export function createPreventVueParsePlugin(options = {}) {
     const defaultOptions = {
         // 需要检查的语言。如果为空数组，则检查所有语言（包括行内代码）
-        languages: ['js', 'javascript', 'ts', 'typescript', 'vue', 'html', 'md'],
+        languages: [],
         patterns: [
             /\{\{.*?\}\}/, // 匹配 {{ ... }} 插值
             /v-[a-zA-Z-]+/, // 匹配 v- 指令
@@ -63,7 +63,7 @@ export function createPreventVueParsePlugin(options = {}) {
 
                 if (shouldProcess(codeContent, lang, finalOptions)) {
                     let html = defaultFenceRender(tokens, idx, options, env, renderer);
-                    const $ = cheerio.load(html);
+                    const $ = cheerio.load(html, { xmlMode: true });
                     $('div[class*="language-"]').attr('v-pre', '');
                     return $.html();
                 }
@@ -80,7 +80,7 @@ export function createPreventVueParsePlugin(options = {}) {
                 // 对于行内代码，lang 参数我们传空字符串 ''
                 if (shouldProcess(codeContent, '', finalOptions)) {
                     let html = defaultCodeInlineRender(tokens, idx, options, env, renderer);
-                    const $ = cheerio.load(html);
+                    const $ = cheerio.load(html, { xmlMode: true });
                     // 为 <code> 标签添加 v-pre
                     $('code').attr('v-pre', '');
                     return $.html();

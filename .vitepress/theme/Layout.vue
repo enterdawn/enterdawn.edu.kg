@@ -5,26 +5,30 @@ import { onMounted, ref, watch, computed, onUnmounted, h } from 'vue'
 const { frontmatter, page, site } = useData()
 const route = useRoute()
 
-import hljs from 'highlight.js'
-import 'highlight.js/styles/rainbow.css' // 可选样式（推荐：atom-one-dark / monokai / github）
-// 代码高亮初始化函数
-const initHighlight = () => {
-    if (route.path === '/') return
-    hljs.highlightAll() // 一键高亮所有 <pre><code> 标签，无需手动遍历
-}
-onMounted(() => {
-    initHighlight() // 初始化高亮
-
-    watch(
-        () => route.path,
-        () => {
-            setTimeout(() => {
-                initHighlight() // 路由切换后重新高亮
-            }, 150)
-        },
-        { deep: true }
-    )
-})
+// import hljs from 'highlight.js'
+// import 'highlight.js/styles/github.css' // 可选样式（推荐：atom-one-dark / monokai / github）
+// //代码高亮初始化函数
+// const initHighlight = () => {
+//     if (route.path === '/') return
+//     hljs.configure({
+//         cssSelector: 'code'
+//     });
+//     hljs.highlightAll() // 一键高亮所有 <pre><code> 标签，无需手动遍历
+//
+// }
+// onMounted(() => {
+//     initHighlight() // 初始化高亮
+//
+//     watch(
+//         () => route.path,
+//         () => {
+//             setTimeout(() => {
+//                 initHighlight() // 路由切换后重新高亮
+//             }, 150)
+//         },
+//         { deep: true }
+//     )
+// })
 
 import openFriendLink from './friend_link/friend_link.ts'
 

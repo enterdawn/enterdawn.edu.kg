@@ -15,6 +15,19 @@ export default defineConfig({
         }
     },
     markdown: {
+       // lineNumbers: true,
+        math: true,
+        shikiConfig: {
+            theme: 'github-light',
+            wrap: true, // 自动换行，避免横向滚动
+            langs: [
+                // 必须添加需要高亮的语言（不能为空！）
+                'javascript', 'typescript', 'vue', 'html',
+                'css', 'markdown', 'json', 'bash', 'tsx', 'cpp'
+            ],
+            drafts: false
+        },
+        //highlight:true,
         config: (md) => {
             const plugin = createPreventVueParsePlugin({
                 // 将 languages 设置为空数组，意味着对所有语言（包括行内代码）都进行内容检查
