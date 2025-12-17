@@ -3,6 +3,35 @@
 import { computed, ref, watch } from 'vue';
 import { useData } from 'vitepress';
 
+// 1. 纯 JS 实现 MD5 哈希（无额外依赖，固定 32 位）
+const md5 = (str: string): string => {
+    let hash = 0;
+    if (str.length === 0) return hash.toString();
+    for (let i = 0; i < str.length; i++) {
+        const char = str.charCodeAt(i);
+        hash = ((hash << 5) - hash) + char;
+        hash = hash & hash; // 转为 32 位整数
+    }
+    // 转为 16 进制字符串，固定 32 位（补零）
+    return Math.abs(hash).toString(16).padStart(32, '0');
+};
+
+// 2. 生成合规的 Gitalk ID（32 位哈希，≤50 字符，唯一）
+const generateSafeGitalkId = (path: string): string => {
+    // 步骤1：标准化路径（消除冗余/特殊字符）
+    const normalizedPath = path
+        .trim()
+        .replace(/^\/+|\/+$/g, '') // 移除首尾斜杠
+        .replace(/\/+/g, '/') // 多个斜杠转为一个
+        .toLowerCase(); // 统一小写
+
+    // 步骤2：生成 32 位 MD5 哈希（固定长度，无超限风险）
+    const hashId = md5(normalizedPath);
+
+    // 步骤3：兜底（首页/空路径）
+    return normalizedPath ? hashId : 'enterdawn_university_home';
+};
+
 export function useGitalk() {
     const { page } = useData();
 
@@ -45,9 +74,10 @@ export function useGitalk() {
         // 先销毁旧的实例
         destroyGitalk();
         console.log(page.value.relativePath)
+        console.log(generateSafeGitalkId(page.value.relativePath))
         const gitalk = new (window as any).Gitalk({
             ...gitalkConfig,
-            id: encodeURIComponent(page.value.relativePath),
+            id: encodeURIComponent(generateSafeGitalkId(page.value.relativePath)),
         });
         gitalk.render(commentRef.value);
     };
